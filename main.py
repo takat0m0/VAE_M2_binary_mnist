@@ -42,6 +42,7 @@ if __name__ == u'__main__':
         
     num_one_epoch =  num_unlabeled_data//batch_size
     with tf.Session() as sess:
+        saver = tf.train.Saver()
         init = tf.global_variables_initializer()
         sess.run(init)
         for epoch in range(epoch_num):
@@ -63,15 +64,5 @@ if __name__ == u'__main__':
                     print(tmp.reshape((28, 28)))
                     print("-----")
 
-
+        saver.save(sess, './model.dump')
         print("-- end train--");sys.stdout.flush()
-        z1 = model.encode(sess, [batch_figs[1]])[0]
-        z2 = model.encode(sess, [batch_figs[8]])[0]
-        diff = [z1[i] - z2[i] for i in range(z_dim)]
-        
-        for i in range(20):
-            z = [z2[_] + diff[_] * i * 0.05 for _ in range(z_dim)]
-            tmp = model.generate(sess, [z])
-            plt.imshow(tmp, cmap = plt.cm.gray)
-            #plt.show()
-            plt.savefig(os.path.join(dump_dir, "fig{}.png".format(i)))
